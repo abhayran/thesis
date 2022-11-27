@@ -1,3 +1,5 @@
 sample_images
 venv
-openslide-win64-20221111
+openslide*
+toy.ipynb
+tiger data
