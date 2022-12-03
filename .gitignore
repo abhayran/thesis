@@ -1,5 +1,4 @@
-sample_images
 venv
 openslide*
 toy.ipynb
-tiger data
+__pycache__
