@@ -3,7 +3,7 @@ import os
 import scipy.io as sio
 from PIL import Image
 
-from src.utils import map_array
+from src.training.utils import map_array
 
 
 class LizardDataset:
