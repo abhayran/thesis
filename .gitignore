@@ -1,4 +1,4 @@
-venv
-openslide*
-toy.ipynb
 __pycache__
+*.h5
+*.tif
+toy.ipynb
