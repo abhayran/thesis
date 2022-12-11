@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
-class DoubleConv(torch.nn.Module):
+class DoubleConvTorch(torch.nn.Module):
     def __init__(self, in_channels: int, out_channels: int) -> None:
         super().__init__()
         self.block = torch.nn.Sequential(
@@ -18,21 +18,21 @@ class DoubleConv(torch.nn.Module):
         return self.block(x)
 
 
-class UNet(torch.nn.Module):
+class UNetTorch(torch.nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.double_convs_encoder = torch.nn.ModuleList([
-            DoubleConv(3, 6),
-            DoubleConv(6, 12),
-            DoubleConv(12, 24),
-            DoubleConv(24, 48),
-            DoubleConv(48, 96),
+            DoubleConvTorch(3, 6),
+            DoubleConvTorch(6, 12),
+            DoubleConvTorch(12, 24),
+            DoubleConvTorch(24, 48),
+            DoubleConvTorch(48, 96),
         ])
         self.double_convs_decoder = torch.nn.ModuleList([
-            DoubleConv(96, 48),
-            DoubleConv(48, 24),
-            DoubleConv(24, 12),
-            DoubleConv(12, 6),
+            DoubleConvTorch(96, 48),
+            DoubleConvTorch(48, 24),
+            DoubleConvTorch(24, 12),
+            DoubleConvTorch(12, 6),
         ])
         self.upsamplers = torch.nn.ModuleList([
             torch.nn.ConvTranspose2d(96, 48, 2, stride=2),
