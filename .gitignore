@@ -2,3 +2,7 @@ __pycache__
 *.h5
 *.tif
 toy.ipynb
+.ipynb_checkpoints
+output
+*.pt
+*.svs

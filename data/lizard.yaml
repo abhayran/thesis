@@ -1,0 +1,11 @@
+path: C:/Users/abdul/Desktop/TUM/thesis/datasets/lizard  # dataset root dir
+train: images/train  # train images (relative to 'path') 128 images
+val: images/val  # val images (relative to 'path') 128 images
+test:  # test images (optional)
+
+# Classes
+names:
+  0: neutrophil
+
+# Download script/URL (optional)
+download: https://ultralytics.com/assets/coco128.zip
