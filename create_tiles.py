@@ -53,6 +53,7 @@ def main():
             slide = PySlide(vars(args))
             tile_extractor = TileGenerator(slide)
             tiles = tile_extractor.execute_and_return()
+            utility_functions.clean(slide)
             for idx, tile in enumerate(tiles):
                 im = Image.fromarray(tile).save(os.path.join(image_id_path, f"tile_{idx}.png"))
                 

@@ -596,7 +596,7 @@ class TileGenerator:
         else:
             logging.debug("Selected " + str(sum(preds)) + " tiles")
 
-    def __return_tiles(self, mask, bg_color):
+    def __return_tiles(self, mask, bg_color, num_tiles_to_return=100):
         """Returns tiles given a PySlide and a mask.
 
         Arguments:
@@ -633,21 +633,14 @@ class TileGenerator:
         else:
             grid_coord = dzg_selectedlevel_maxtilecoords
 
-        # Counters
-        preds = [0] * n_tiles
-        row, col, i = 0, 0, 0
-        tile_names = []
-        tile_dims_w = []
-        tile_dims_h = []
-        tile_rows = []
-        tile_cols = []
-        
-        # Tiles to return
         tiles_to_return = []
+        coord_mem = set()
 
-        # Evaluate tiles using the selector function
-        while row < grid_coord[1]:
-
+        while len(tiles_to_return) < num_tiles_to_return:
+            row, col = random.randint(0, grid_coord[1] - 1), random.randint(0, grid_coord[0] - 1)
+            if (row, col) in coord_mem:
+                continue
+            
             # Extract the tile from the mask (the last level is used
             # since the mask is already rescaled)
             mask_tile = dzgmask.get_tile(dzgmask.level_count - 1, (col, row))
@@ -655,8 +648,8 @@ class TileGenerator:
             # Tile converted to BGR
             mask_tile = np.array(mask_tile)
 
-            # Predict if the tile will be kept (1) or not (0)
-            preds[i] = utility_functions.selector(mask_tile, self.input_slide.thres, bg_color, self.input_slide.method)
+            # Predict if the tile will be kept or not
+            keep_tile = utility_functions.selector(mask_tile, self.input_slide.thres, bg_color, self.input_slide.method)
 
             # Save patches if requested
             tile = dzg.get_tile(dzg_selectedlevel_idx, (col, row))
@@ -664,32 +657,11 @@ class TileGenerator:
             # If we need square patches only, we set the prediction to zero if the tile is not square
             if not self.input_slide.save_nonsquare:
                 if tile.size[0] != tile.size[1]:
-                    preds[i] = 0
-
-            # Prepare metadata
-            tile_names.append(self.input_slide.sample_id + "_" + str(i).zfill(digits_padding))
-            tile_dims_w.append(tile.size[0])
-            tile_dims_h.append(tile.size[1])
-            tile_rows.append(row)
-            tile_cols.append(col)
+                    keep_tile = 0
 
             # Append to `tiles_to_return` if tile meets the required criteria
-            if preds[i] == 1:
+            if keep_tile == 1:
                 tiles_to_return.append(np.array(tile))
+                coord_mem.add((row, col))
 
-            # Jump to the next column tile
-            col += 1
-
-            # If we reach the right edge of the image, jump to the next row
-            if col == grid_coord[0]:
-                col = 0
-                row += 1
-
-                if self.input_slide.save_tilecrossed_image:
-                    tc_w = 0
-                    tc_h = tc_h + tilecross_patchsize + 1
-
-            # Increase counter for metadata
-            i += 1
-        
         return tiles_to_return

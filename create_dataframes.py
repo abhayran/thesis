@@ -1,5 +1,7 @@
+import numpy as np
 import os
 import pandas as pd
+from typing import Dict
 
 
 ORTHOPEDIA_DIR = "/mnt/dss/dssfs04/pn25ke/pn25ke-dss-0001/orthopedia"
@@ -7,6 +9,18 @@ INFECT_CSV = "dat_orthopedia_infection2.csv"
 NOINFECT_CSV = "dat_orthopedia_noinfection2.csv"
 CSV_SEP = ";"
 TRAIN_SPLIT = 0.7
+
+
+def return_train_val_test_dfs(df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
+    fn = df["Fallnummer"].unique()
+    np.random.shuffle(fn)
+    num_train = int(len(fn) * TRAIN_SPLIT)
+    num_val = (len(fn) - num_train) // 2
+    return {
+        "train": df[df["Fallnummer"].isin(fn[:num_train])],
+        "val": df[df["Fallnummer"].isin(fn[num_train:num_train + num_val])],
+        "test": df[df["Fallnummer"].isin(fn[num_train + num_val:])],
+    }
 
 
 def main():
@@ -40,16 +54,18 @@ def main():
     print(f"Number of no infection images: {len(noinfect_df)}")
 
     for key in dfs:
-        # shuffle dataframe
-        df = dfs[key].sample(frac=1)
-
         # divide into train, validation and test sets; save dataframes as CSV files
-        num_train = int(len(df) * TRAIN_SPLIT) 
-        num_val = (len(df) - num_train) // 2
-        df[:num_train].to_csv(os.path.join(ORTHOPEDIA_DIR, "csv_files", f"{key}_train.csv"), index=False)
-        df[num_train:num_train + num_val].to_csv(os.path.join(ORTHOPEDIA_DIR, "csv_files", f"{key}_val.csv"), index=False)
-        df[num_train + num_val:].to_csv(os.path.join(ORTHOPEDIA_DIR, "csv_files", f"{key}_test.csv"), index=False)
+        # df_splits = return_train_val_test_dfs(dfs[key])
 
+        while True: 
+            df_splits = return_train_val_test_dfs(dfs[key])
+            print("Split:", [len(df_splits[split]) / len(dfs[key]) for split in ["train", "val", "test"]])
+            if input("Works? yes or no\n") == "yes":
+                break
+        
+        for split in ["train", "val", "test"]:
+            df_splits[split].to_csv(os.path.join(ORTHOPEDIA_DIR, "csv_files", f"{key}_{split}.csv"), index=False)
+            
         # read dataframes and print the length as a sanity check
         for split in ["train", "val", "test"]:
             print(key, split, len(pd.read_csv(os.path.join(ORTHOPEDIA_DIR, "csv_files", f"{key}_{split}.csv"))), "samples")
