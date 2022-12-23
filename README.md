@@ -24,4 +24,5 @@ Detection of periprosthetic joint infection and abrasion in histology of patient
 
 1. [This repository](https://github.com/adamshephard/TIAger) from TIGER challenge by Shephard et al.
 2. [PyHIST](https://github.com/manuel-munoz-aguirre/PyHIST) by Manuel Muñoz Aguirre
-3. [YOLOv5](https://github.com/ultralytics/yolov5/) by Ultralytics 
+3. [YOLOv5](https://github.com/ultralytics/yolov5/) by Ultralytics
+4. [Official PyTorch repo](https://github.com/juho-lee/set_transformer) for set transformers by Lee et al.
