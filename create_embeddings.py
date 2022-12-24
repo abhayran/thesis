@@ -13,7 +13,6 @@ from typing import List
 ORTHOPEDIA_DIR = "/mnt/dss/dssfs04/pn25ke/pn25ke-dss-0001/orthopedia"
 INPUT_DIM = 224
 EMBEDDING_DIM = 512
-EMBEDDING_LAYER = "avgpool"
 DEVICE_ID = 0
 BATCH_SIZE = 100
 
@@ -22,7 +21,10 @@ class Embedder:
     def __init__(self, device: torch.device):
         self.device = device
         self.model = models.resnet18(weights=ResNet18_Weights.DEFAULT).eval().to(self.device)
-
+        
+        self.features = {}
+        self.model.avgpool.register_forward_hook(self.get_features('feats'))
+        
         self.transform = transforms.Compose([
             transforms.Resize((INPUT_DIM, INPUT_DIM)),
             transforms.ToTensor(),
@@ -32,6 +34,11 @@ class Embedder:
             ),
         ])
     
+    def get_features(self, name: str):
+        def hook(model, input_, output_):
+            self.features[name] = output_.detach()
+        return hook
+        
     @torch.no_grad()
     def __call__(self, image_paths: List[str]):
         input_tensor = Variable(
@@ -40,16 +47,8 @@ class Embedder:
                 for path in image_paths
             ]).to(self.device)
         )
-
-        activation = {}
-        def get_activation(name: str):
-            def hook(m, i, o):
-                activation[name] = o.detach()
-            return hook
-
-        self.model.register_forward_hook(get_activation(EMBEDDING_LAYER))
         self.model(input_tensor)
-        return activation[EMBEDDING_LAYER].cpu()
+        return self.features['feats'].squeeze().cpu()
 
 
 def make_embedding_dir(embedding_path: str) -> None:

@@ -1,0 +1,12 @@
+mlflow_uri: "http://localhost:2345/"
+mlflow_experiment_name: "mil_overfit"
+
+orthopedia_dir: "/mnt/dss/dssfs04/pn25ke/pn25ke-dss-0001/orthopedia"
+embedding_dim: 512
+
+device_id: 0
+log_model_every: 10
+train_batch_size: 16
+val_batch_size: 32
+num_epochs: 100
+learning_rate: 0.001

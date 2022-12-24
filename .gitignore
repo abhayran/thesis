@@ -6,3 +6,5 @@ toy.ipynb
 output
 *.pt
 *.svs
+.bashrc
+mlruns
