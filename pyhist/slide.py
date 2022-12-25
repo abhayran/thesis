@@ -103,7 +103,7 @@ class TileGenerator:
         else:
             raise NotImplementedError
 
-    def execute_and_return(self):
+    def execute_and_return(self, **kwargs):
         """Executes a tile-generating process and returns to resulting tiles instead of saving to disk."""
         if self.method == "graph":
             mask, bg_color = self.__graph()
@@ -113,7 +113,7 @@ class TileGenerator:
             mask, bg_color = self.__adaptive()
         else:
             raise NotImplementedError
-        return self.__return_tiles(mask, bg_color)
+        return self.__return_tiles(mask, bg_color, num_tiles_to_return=kwargs.get("num_tiles_to_return", 100))
         
     def __randomsampler(self):
         """Extracts tiles randomly from a slide. No content thresholding is performed."""
