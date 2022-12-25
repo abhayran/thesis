@@ -8,3 +8,4 @@ output
 *.svs
 .bashrc
 mlruns
+mlartifacts
