@@ -1,4 +1,4 @@
-path: C:/Users/abdul/Desktop/TUM/thesis/datasets/lizard  # dataset root dir
+path: /mnt/dss/dsshome1/09/ge59gew2/lizard  # dataset root dir
 train: images/train  # train images (relative to 'path') 128 images
 val: images/val  # val images (relative to 'path') 128 images
 test:  # test images (optional)
